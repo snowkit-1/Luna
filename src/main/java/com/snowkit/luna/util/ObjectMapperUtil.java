@@ -21,7 +21,7 @@ public class ObjectMapperUtil {
         objectMapper.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
     }
 
-    public static ObjectMapper get() {
+    public static ObjectMapper getObjectMapper() {
         return objectMapper;
     }
 }
