@@ -22,8 +22,10 @@ public class JWTUtil {
     private final static Algorithm ALGORITHM = Algorithm.HMAC256(KeyUtil.JWT_SECRET_KEY);
 
     public static String create(Map<String, String> claims) {
+        Date now = new Date();
         JWTCreator.Builder builder = JWT.create()
-                .withExpiresAt(new Date(System.currentTimeMillis() + PERIOD));
+                .withIssuedAt(now)
+                .withExpiresAt(new Date(now.getTime() + PERIOD));
 
         for (String key : claims.keySet()) {
             String value = claims.get(key);
