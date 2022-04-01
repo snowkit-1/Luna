@@ -35,17 +35,17 @@ public class RestTemplateUtil {
     protected RestTemplate getRestTemplate() {
         return restTemplate;
     }
-}
 
-class RestTemplateErrorHandler implements ResponseErrorHandler {
+    private static class RestTemplateErrorHandler implements ResponseErrorHandler {
 
-    @Override
-    public boolean hasError(ClientHttpResponse response) throws IOException {
-        return response.getStatusCode().isError();
-    }
+        @Override
+        public boolean hasError(ClientHttpResponse response) throws IOException {
+            return response.getStatusCode().isError();
+        }
 
-    @Override
-    public void handleError(ClientHttpResponse response) {
-        // Nothing
+        @Override
+        public void handleError(ClientHttpResponse response) {
+            // Nothing
+        }
     }
 }
