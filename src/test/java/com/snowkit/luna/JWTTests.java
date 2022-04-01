@@ -8,7 +8,7 @@ import java.util.Map;
 public class JWTTests {
 
     public static void main(String[] args) {
-        Map<String, String> claims = new HashMap<>();
+        Map<String, Object> claims = new HashMap<>();
         claims.put("data", "hello");
         String jwt = JWTUtil.create(claims);
         System.out.println(jwt);
@@ -17,6 +17,6 @@ public class JWTTests {
         System.out.println(JWTUtil.getPayload(jwt));
 
         String token = jwt;
-        JWTUtil.validate(token, claims);
+        JWTUtil.validate(token);
     }
 }

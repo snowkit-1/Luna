@@ -1,10 +1,8 @@
 package com.snowkit.luna.util;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.Verification;
 
 import java.util.Base64;
 import java.util.Date;
@@ -20,28 +18,19 @@ public class JWTUtil {
 
     private final static Algorithm ALGORITHM = Algorithm.HMAC256(KeyUtil.JWT_SECRET_KEY);
 
-    public static String create(Map<String, String> claims) {
+    public static String create(Map<String, Object> claims) {
         Date now = new Date();
-        JWTCreator.Builder builder = JWT.create()
+        String token = JWT.create()
                 .withIssuedAt(now)
-                .withExpiresAt(new Date(now.getTime() + PERIOD));
+                .withExpiresAt(new Date(now.getTime() + PERIOD))
+                .withPayload(claims)
+                .sign(ALGORITHM);
 
-        for (String key : claims.keySet()) {
-            String value = claims.get(key);
-            builder.withClaim(key, value);
-        }
-
-        return builder.sign(ALGORITHM);
+        return token;
     }
 
-    public static void validate(String token, Map<String, String> claims) {
-        Verification require = JWT.require(ALGORITHM);
-
-        for (String key : claims.keySet()) {
-            String value = claims.get(key);
-            require.withClaim(key, value);
-        }
-        JWTVerifier verifier = require.build();
+    public static void validate(String token) {
+        JWTVerifier verifier = JWT.require(ALGORITHM).build();
 
         verifier.verify(token);
     }
