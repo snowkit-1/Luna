@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class SHAUtil {
+public class ShaUtil {
 
     public static String sha256(byte[] plainData) {
         return hash(plainData, Algorithm.SHA_256);

@@ -1,9 +1,9 @@
 package com.snowkit.luna;
 
 import com.snowkit.luna.model.Envelope;
-import com.snowkit.luna.util.AES256Util;
+import com.snowkit.luna.util.Aes256Util;
 import com.snowkit.luna.util.KeyUtil;
-import com.snowkit.luna.util.RSAUtil;
+import com.snowkit.luna.util.RsaUtil;
 
 import javax.crypto.SecretKey;
 import java.security.PrivateKey;
@@ -26,12 +26,12 @@ public class HybridEncryptionTests {
 
     public static Envelope encrypt(String plainData, String publicKeyInRequest) {
         // 1. 원본 데이터를 AES 암호화
-        SecretKey secretKey = AES256Util.getSecretKey(KeyUtil.AES_KEY);
-        Envelope envelope = AES256Util.encrypt(plainData, secretKey);
+        SecretKey secretKey = Aes256Util.getSecretKey(KeyUtil.AES_KEY);
+        Envelope envelope = Aes256Util.encrypt(plainData, secretKey);
 
         // 2. AES KEY를 RSA 암호화
-        PublicKey publicKey = RSAUtil.getPublicKey(publicKeyInRequest);
-        byte[] rsaEncrypted = RSAUtil.encrypt(KeyUtil.AES_KEY, publicKey);
+        PublicKey publicKey = RsaUtil.getPublicKey(publicKeyInRequest);
+        byte[] rsaEncrypted = RsaUtil.encrypt(KeyUtil.AES_KEY, publicKey);
         String rsaEncryptedBase64 = Base64.getEncoder().encodeToString(rsaEncrypted);
         envelope.setEncKey(rsaEncryptedBase64);
 
@@ -41,13 +41,13 @@ public class HybridEncryptionTests {
     public static byte[] decrypt(Envelope response) {
         // 1. AES KEY를 RSA 복호화
         byte[] rsaEncrypted = Base64.getDecoder().decode(response.getEncKey());
-        PrivateKey privateKey = RSAUtil.getPrivateKey(KeyUtil.PRIVATE_KEY);
-        byte[] aesKeyBase64Bytes = RSAUtil.decrypt(rsaEncrypted, privateKey);
+        PrivateKey privateKey = RsaUtil.getPrivateKey(KeyUtil.PRIVATE_KEY);
+        byte[] aesKeyBase64Bytes = RsaUtil.decrypt(rsaEncrypted, privateKey);
         String aesKeyBase64 = new String(aesKeyBase64Bytes);
-        SecretKey secretKey = AES256Util.getSecretKey(aesKeyBase64);
+        SecretKey secretKey = Aes256Util.getSecretKey(aesKeyBase64);
 
         // 2. AES 복호화
-        byte[] plainData = AES256Util.decrypt(response.getEncData(), secretKey, response.getIv());
+        byte[] plainData = Aes256Util.decrypt(response.getEncData(), secretKey, response.getIv());
 
         return plainData;
     }

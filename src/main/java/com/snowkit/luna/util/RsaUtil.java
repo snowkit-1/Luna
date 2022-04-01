@@ -11,7 +11,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
-public class RSAUtil {
+public class RsaUtil {
 
     public static byte[] encrypt(String plainData, PublicKey publicKey) {
         return encrypt(plainData.getBytes(StandardCharsets.UTF_8), publicKey);

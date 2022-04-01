@@ -8,7 +8,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
-public class JWTUtil {
+public class JwtUtil {
 
     private final static long HOUR = 60 * 60 * 1000;
 
@@ -44,7 +44,7 @@ public class JWTUtil {
     }
 
     public static String createKey() {
-        byte[] key = AES256Util.createKey();
+        byte[] key = Aes256Util.createKey();
 
         return Base64.getEncoder().encodeToString(key);
     }

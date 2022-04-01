@@ -11,7 +11,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-public class AES256Util {
+public class Aes256Util {
 
     /**
      * Generate secret key (save in environment variable)
