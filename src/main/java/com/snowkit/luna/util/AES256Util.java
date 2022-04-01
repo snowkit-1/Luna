@@ -13,6 +13,9 @@ import java.util.Base64;
 
 public class AES256Util {
 
+    /**
+     * Generate secret key (save in environment variable)
+     */
     public static byte[] createKey() {
         KeyGenerator keyGen;
         try {
@@ -28,9 +31,12 @@ public class AES256Util {
         return aesKey;
     }
 
-    public static Envelope encrypt(String plainData, byte[] aesKey) {
+    public static Envelope encrypt(String plainData, SecretKey secretKey) {
+        return encrypt(plainData.getBytes(StandardCharsets.UTF_8), secretKey);
+    }
+
+    public static Envelope encrypt(byte[] plainData, SecretKey secretKey) {
         Cipher cipher = getCipher();
-        SecretKey secretKey = getSecretKey(aesKey);
 
         try {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -45,23 +51,22 @@ public class AES256Util {
         String ivBase64 = Base64.getEncoder().encodeToString(iv);
 
         Envelope envelope = Envelope.builder()
-                .encryptedData(encryptedDataBase64)
+                .encData(encryptedDataBase64)
                 .iv(ivBase64)
                 .build();
 
         return envelope;
     }
 
-    public static String decrypt(String encryptedDataBase64, byte[] aesKey, String ivBase64) {
+    public static byte[] decrypt(String encryptedDataBase64, SecretKey secretKey, String ivBase64) {
         byte[] encryptedData = Base64.getDecoder().decode(encryptedDataBase64);
         byte[] iv = Base64.getDecoder().decode(ivBase64);
 
-        return decrypt(encryptedData, aesKey, iv);
+        return decrypt(encryptedData, secretKey, iv);
     }
 
-    public static String decrypt(byte[] encryptedData, byte[] aesKey, byte[] iv) {
+    public static byte[] decrypt(byte[] encryptedData, SecretKey secretKey, byte[] iv) {
         Cipher cipher = getCipher();
-        SecretKey secretKey = getSecretKey(aesKey);
 
         try {
             cipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
@@ -70,9 +75,19 @@ public class AES256Util {
             throw new RuntimeException("Cipher init failed.");
         }
 
-        String plainData = getPlainData(cipher, encryptedData);
+        byte[] plainData = getPlainData(cipher, encryptedData);
 
         return plainData;
+    }
+
+    public static SecretKey getSecretKey(String aesKeyBase64) {
+        byte[] aesKey = Base64.getDecoder().decode(aesKeyBase64);
+
+        return getSecretKey(aesKey);
+    }
+
+    public static SecretKey getSecretKey(byte[] aesKey) {
+        return new SecretKeySpec(aesKey, "AES");
     }
 
     private static Cipher getCipher() {
@@ -87,15 +102,10 @@ public class AES256Util {
         return cipher;
     }
 
-    private static SecretKey getSecretKey(byte[] aesKey) {
-        return new SecretKeySpec(aesKey, "AES");
-    }
-
-    private static byte[] getEncryptedData(Cipher cipher, String plainData) {
-        byte[] plainDataBytes = plainData.getBytes(StandardCharsets.UTF_8);
+    private static byte[] getEncryptedData(Cipher cipher, byte[] plainData) {
         byte[] encryptedData;
         try {
-            encryptedData = cipher.doFinal(plainDataBytes);
+            encryptedData = cipher.doFinal(plainData);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to encrypt.");
@@ -104,16 +114,14 @@ public class AES256Util {
         return encryptedData;
     }
 
-    private static String getPlainData(Cipher cipher, byte[] encryptedData) {
-        byte[] plainDataBytes;
+    private static byte[] getPlainData(Cipher cipher, byte[] encryptedData) {
+        byte[] plainData;
         try {
-            plainDataBytes = cipher.doFinal(encryptedData);
+            plainData = cipher.doFinal(encryptedData);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to decrypt.");
         }
-
-        String plainData = new String(plainDataBytes);
 
         return plainData;
     }
