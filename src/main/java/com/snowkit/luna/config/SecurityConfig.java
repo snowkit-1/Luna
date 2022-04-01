@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -41,7 +42,8 @@ public class SecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             http.mvcMatcher("/admin/**")
                     .authorizeRequests()
-                    .mvcMatchers("/admin/register/**", "/admin/login/**").permitAll()
+                    .mvcMatchers("/admin/register", "/admin/login").permitAll()
+                    .mvcMatchers(HttpMethod.POST, "/admin/users").permitAll()
                     .mvcMatchers("/admin/**").hasRole(Role.ADMIN.name())
                     .and()
                 .addFilterBefore(new JwtAdminFilter(adminDetailsService), UsernamePasswordAuthenticationFilter.class)
@@ -76,7 +78,8 @@ public class SecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             http.mvcMatcher("/**")
                     .authorizeRequests()
-                    .mvcMatchers("/register/**", "/login/**").permitAll()
+                    .mvcMatchers("/register", "/login").permitAll()
+                    .mvcMatchers(HttpMethod.POST, "/users").permitAll()
                     .mvcMatchers("/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
                     .and()
                 .addFilterBefore(new JwtUserFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class)
