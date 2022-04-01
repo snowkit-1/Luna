@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 
@@ -19,14 +20,19 @@ import javax.persistence.Entity;
 @Entity
 public class User extends CommonEntity {
 
+    @Column(unique = true)
     private String username;
 
     private String password;
+
+    @Column(unique = true)
+    private String displayName;
 
     private String birth;
 
     private String phone;
 
+    @Column(unique = true)
     private String email;
 
     @Convert(converter = RoleConverter.class)
