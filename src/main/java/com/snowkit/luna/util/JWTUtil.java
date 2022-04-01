@@ -8,7 +8,6 @@ import com.auth0.jwt.interfaces.Verification;
 
 import java.util.Base64;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 
 public class JWTUtil {

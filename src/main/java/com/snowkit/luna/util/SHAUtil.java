@@ -2,8 +2,6 @@ package com.snowkit.luna.util;
 
 import lombok.Getter;
 
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -33,8 +31,8 @@ public class SHAUtil {
 
     private static String bytesToHex(byte[] hashedData) {
         StringBuilder hexString = new StringBuilder(2 * hashedData.length);
-        for (int i = 0; i < hashedData.length; i++) {
-            String hex = Integer.toHexString(0xff & hashedData[i]);
+        for (byte hashedByte : hashedData) {
+            String hex = Integer.toHexString(0xff & hashedByte);
             if (hex.length() == 1) {
                 hexString.append('0');
             }

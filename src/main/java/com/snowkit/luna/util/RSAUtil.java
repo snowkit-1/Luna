@@ -1,6 +1,5 @@
 package com.snowkit.luna.util;
 
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
