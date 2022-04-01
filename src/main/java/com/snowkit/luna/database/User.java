@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -18,6 +19,7 @@ import javax.persistence.Entity;
 @AllArgsConstructor
 @Builder
 @Entity
+@ToString(callSuper = true)
 public class User extends CommonEntity {
 
     @Column(unique = true)
