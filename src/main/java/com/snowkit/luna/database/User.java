@@ -18,8 +18,8 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
 @ToString(callSuper = true)
+@Entity
 public class User extends CommonEntity {
 
     @Column(unique = true)
