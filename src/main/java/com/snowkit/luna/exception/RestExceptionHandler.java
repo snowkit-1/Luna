@@ -21,20 +21,21 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(NoContentException.class)
     public ResponseEntity<?> noContent(Exception e) {
-        log.info(e.getMessage());
+        log.error(e.getMessage(), e);
 
         return ResponseEntity.noContent().build();
     }
 
     @ExceptionHandler({IllegalArgumentException.class, HttpMessageNotReadableException.class})
     public ResponseEntity<ResponseMessage> badRequest(Exception e) {
-        log.info(e.getMessage());
+        log.error(e.getMessage(), e);
 
         return ResponseEntity.badRequest().body(new ResponseMessage(e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> notValidException(MethodArgumentNotValidException e) {
+        log.error(e.getMessage(), e);
         Map<String, String> errorMap = new HashMap<>();
         e.getBindingResult().getFieldErrors().forEach(fieldError ->
                 errorMap.put(fieldError.getField(), fieldError.getDefaultMessage()));
@@ -42,9 +43,16 @@ public class RestExceptionHandler {
         return ResponseEntity.badRequest().body(errorMap);
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ResponseMessage> dataIntegrityViolationException(DataIntegrityViolationException e) {
+        log.error(e.getMessage(), e);
+
+        return ResponseEntity.badRequest().body(new ResponseMessage("Data integrity violation"));
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ResponseMessage> forbidden(Exception e) {
-        log.info(e.getMessage());
+        log.error(e.getMessage(), e);
 
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
@@ -52,14 +60,9 @@ public class RestExceptionHandler {
                 .body(new ResponseMessage(e.getMessage()));
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ResponseMessage> dataIntegrityViolationException(DataIntegrityViolationException e) {
-        return ResponseEntity.internalServerError().body(new ResponseMessage("SQL Error"));
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseMessage> internalServerError(Exception e) {
-        log.info(e.getMessage());
+        log.error(e.getMessage(), e);
 
         String errorMessage = e.getMessage();
         if (errorMessage == null) {
